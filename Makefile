@@ -1,3 +1,4 @@
+# Project settings
 APP_NAME = url-shortener
 PKG_LIST := $(shell go list ./...)
 
@@ -12,34 +13,42 @@ help:
 	@grep -E '^[a-zA-Z_-]+:.*?## ' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 
-test: 
+## Run tests with coverage
+test: ## Run unit tests with coverage
 	go test -v -coverprofile=coverage.out ./...
 	go tool cover -func=coverage.out
 
-cover-html: test 
+## Generate HTML coverage report
+cover-html: test ## Open HTML coverage report
 	go tool cover -html=coverage.out -o coverage.html
 	@echo "View coverage at: file://$(CURDIR)/coverage.html"
 
-tidy: 
+## Format, vet, tidy
+tidy: ## Tidy and format code
 	go mod tidy
 	go fmt ./...
 	go vet ./...
 
-clean: 
+## Clean coverage files
+clean: ## Remove generated files
 	rm -f coverage.out coverage.html
 
-run: 
+## Run app locally (host)
+run: ## Run app directly using go run
 	go run main.go
 
-build: 
-	go build -o $(APP_NAME) 
+## Build binary
+build: ## Build local binary
+	go build -o $(APP_NAME) main.go
 
-docker-build: 
+## Docker: Build image
+docker-build: ## Build docker image using docker-compose
 	docker compose build
 
-docker-up: 
+## Docker: Run container
+docker-up: ## Run docker container using docker-compose
 	docker compose up
 
-
-docker-down: 
+## Docker: Stop container
+docker-down: ## Stop and remove docker container
 	docker compose down
